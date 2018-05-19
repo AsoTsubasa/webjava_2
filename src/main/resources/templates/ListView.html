@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<title>商品一覧</title>
+	</head>
+
+	<body>
+		<th:if="${message} != null" >
+			<span class="message" th:text="${message}"></span><br />
+		</th:if>
+		商品一覧
+		<form method="post" action="#" th:object="${listForm}">
+			<table class="list">
+				<tr>
+					<th>商品番号</th>
+					<th>商品名</th>
+					<th>価格</th>
+					<th>個数</th>
+					<th>購入</th>
+				</tr>
+				<tr th:each="items, stat : *{itemList}">
+					<td th:text="${stat.count}"></td>
+					<td th:text="${items.name}"></td>
+					<td th:text="${items.price}"></td>
+					<td>
+						<input type="text" name="num" />
+					</td>
+					<td>
+						<button type="submit" name="select" th:value="${stat.index}">カートに追加</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

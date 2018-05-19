@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<title>カート</title>
+	</head>
+
+	<body>
+		カート
+		<form method="post" action="#" th:object="${listForm}">
+			<table class="list">
+				<tr>
+					<th>No.</th>
+					<th>商品名</th>
+					<th>価格</th>
+					<th>個数</th>
+				</tr>
+				<tr th:each="orders, stat : *{orderList}">
+					<td th:text="${stat.count}"></td>
+					<td th:text="${orders[stat.index].item.name}"></td>
+					<td th:text="${orders[stat.index].item.price}"></td>
+					<td th:text="${orders[stat.index].num}"></td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>
