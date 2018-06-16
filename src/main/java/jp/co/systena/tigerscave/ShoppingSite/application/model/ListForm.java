@@ -1,46 +1,31 @@
 package jp.co.systena.tigerscave.ShoppingSite.application.model;
 
-import java.util.List;
-
 public class ListForm {
 
-  // 商品一覧
-  private List<Item> itemList;
+  // アイテムID
+  private int itemId;
 
-  // カート情報
-  private List<Order> orderList;
+  // 数量
+  private int num;
 
-  private String message;
-
-  public List<Item> getItemList()
+  public int getItemId()
   {
-    return itemList;
+    return itemId;
   }
 
-  public List<Order> getOrderList()
+  public void setItemId(int itemId)
   {
-    return orderList;
+    this.itemId = itemId;
   }
 
-  public String getMessage()
+  public int getNum()
   {
-
-    return message;
+    return num;
   }
 
-  public void setItemList(List<Item> itemList)
+  public void setNum(int num)
   {
-    this.itemList = itemList;
-  }
-
-  public void setOrderList(List<Order> orderList)
-  {
-    this.orderList = orderList;
-  }
-
-  public void setMessage(String message)
-  {
-    this.message = message;
+    this.num = num;
   }
 
 }

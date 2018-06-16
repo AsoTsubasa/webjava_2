@@ -8,23 +8,29 @@ public class Order {
   // 個数
   private int num;
 
-  public Item getItem() {
+  public Order(Item item, int num)
+  {
+    setItem(item);
+    setNum(num);
+  }
 
+  public Item getItem()
+  {
     return item;
   }
 
-  public int getNum() {
-
+  public int getNum()
+  {
     return num;
   }
 
-  public void setItem(Item item) {
-
+  public void setItem(Item item)
+  {
     this.item = item;
   }
 
-  public void setNum(int num) {
-
+  public void setNum(int num)
+  {
     this.num = num;
   }
 

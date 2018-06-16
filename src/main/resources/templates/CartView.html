@@ -6,7 +6,7 @@
 	</head>
 
 	<body>
-		カート
+		カートの中身
 		<form method="post" action="#" th:object="${listForm}">
 			<table class="list">
 				<tr>
@@ -15,13 +15,21 @@
 					<th>価格</th>
 					<th>個数</th>
 				</tr>
-				<tr th:each="orders, stat : *{orderList}">
-					<td th:text="${stat.count}"></td>
-					<td th:text="${orders[stat.index].item.name}"></td>
-					<td th:text="${orders[stat.index].item.price}"></td>
-					<td th:text="${orders[stat.index].num}"></td>
-				</tr>
+				<th:block th:each="order: ${cart.orderList}">
+					<tr>
+						<td th:text="${order.item.id}"></td>
+						<td th:text="${order.item.name}"></td>
+						<td th:text="'\\' + ${order.item.price}"></td>
+						<td th:text="${order.num}"></td>
+					</tr>
+				</th:block>
 			</table>
+		</form>
+
+		<br />
+
+		<form method="get" action="#" th:action="@{/ListView}" th:object="${listForm}">
+			<input type='submit' value='商品一覧に戻る' class='submit' />
 		</form>
 	</body>
 </html>

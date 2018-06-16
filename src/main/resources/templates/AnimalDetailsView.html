@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http:www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<title>動物詳細画面</title>
+	</head>
+
+	<body>
+		<div th:object="${ListForm}">
+			<p th:text="*{selectedAnimalId}"></p>が選択されました。
+		</div>
+	</body>
+</html>

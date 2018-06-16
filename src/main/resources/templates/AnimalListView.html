@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<title>動物一覧</title>
+	</head>
+
+	<body>
+		<form method="post" action="#" th:action="@{/AnimalDetailsView}" th:object="${listForm}">
+			<table class="list">
+				<tr>
+					<th>選択</th>
+					<th>No.</th>
+					<th>動物名</th>
+				</tr>
+				<th:block th:each="animal: ${animals}">
+				<tr>
+					<td>
+						<!--  <input type="radio" name="select" th:value="${animal.animalId}" th:field="*{selectedAnimalId}" />-->
+						<input type="radio" name="select" />
+					</td>
+					<!-- <td th:text="${animal.animalId}" ></td> -->
+					<td th:text="${animal.name}"></td>
+				</tr>
+				</th:block>
+			</table>
+
+			<input type="submit" value="決定" />
+
+		</form>
+
+	</body>
+</html>

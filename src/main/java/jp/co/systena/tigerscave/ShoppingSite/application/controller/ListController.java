@@ -1,16 +1,16 @@
 package jp.co.systena.tigerscave.ShoppingSite.application.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import jp.co.systena.tigerscave.ShoppingSite.application.model.Cart;
 import jp.co.systena.tigerscave.ShoppingSite.application.model.Item;
 import jp.co.systena.tigerscave.ShoppingSite.application.model.ListForm;
 import jp.co.systena.tigerscave.ShoppingSite.application.model.ListService;
@@ -25,84 +25,71 @@ public class ListController {
   @RequestMapping(value="/ListView", method = RequestMethod.GET)
   public ModelAndView show(ModelAndView mav)
   {
-    ListService listService = new ListService();
+    String message = (String) session.getAttribute("message");
+    session.removeAttribute("message");
 
-    // Viewに渡すデータを設定
-    // セッション情報から保存したデータを取得してメッセージを生成
-    ListForm listForm = (ListForm) session.getAttribute("form");
-    session.removeAttribute("form");
-    if (listForm != null) {
-      if (listForm.getMessage() != null) {
-        mav.addObject("message", listForm.getMessage());
-      }
+    Cart cart = (Cart)session.getAttribute("cart");
+    if(cart == null) {
+        cart = new Cart();
+        session.setAttribute("cart", cart);
     }
 
-    listForm = new ListForm();
-    // 商品一覧を取得
-    List<Item> itemList = listService.getItemList();
-    listForm.setItemList(itemList);
-
-    mav.addObject("listForm", listForm);  // 新規クラスを設定
-
-    List<Order> orderList = (List<Order>) session.getAttribute("orderList");
-    if( orderList == null) {
-        orderList = new ArrayList<Order>();
-        session.setAttribute("orderList", orderList);
+    if(message != null && !message.isEmpty())
+    {
+      mav.addObject("message", message);
     }
 
-    //Cart cart = new Cart();
-    //cart.setOrderList(orderList);
-    mav.addObject("orders", orderList);
+    List<Item> itemList = new ListService().getItemList();
+    mav.addObject("items", itemList);
 
-    BindingResult bindingResult = (BindingResult) session.getAttribute("result");
-    if (bindingResult != null) {
-      mav.addObject("bindingResult", bindingResult);
-    }
-    // Viewのテンプレート名を設定
-    mav.setViewName("ListView");
+    ListForm listForm = new ListForm();
+    mav.addObject("listForm", listForm);
     return mav;
 
   }
 
 
   @RequestMapping(value="/ListView", method = RequestMethod.POST)
-  public ModelAndView order(ModelAndView mav, @ModelAttribute ListForm listForm, HttpServletRequest request)
+  public ModelAndView order(ModelAndView mav, @Valid ListForm listForm, BindingResult bindingResult, HttpServletRequest request)
   {
 
-    ListService listService = new ListService();
-
-    //Cart cart = (Cart)session.getAttribute("cart");
-    //session.setAttribute("cart", cart);
-
-    List<Order> orderList = (List<Order>)session.getAttribute("OrderList");
-    if(orderList == null)
-    {
-      orderList = new ArrayList<Order>();
-      session.setAttribute("orderList", orderList);
+    boolean isError = false;
+    Item item = null;
+    if (bindingResult.getAllErrors().size() > 0) {
+        isError = true;
+    } else {
+        item = new ListService().findItemById(listForm.getItemId());
     }
 
-    String select = request.getParameter("select");
-    String numStr = request.getParameter("num");
+    if (isError == true || item == null) {
+      // エラー(動作未確認)
+      String msgerr = "エラーが発生しました。";
+      session.setAttribute("message", msgerr);
 
-    if (select != null && numStr != null) {
-      int id = Integer.parseInt(select);
-      int num = Integer.parseInt(numStr);
-
-      List<Item> itemList = listService.getItemList();
-      //List<Item> itemList = listForm.getItemList();
-
-      Order order = new Order();
-      order.setItem(itemList.get(id));
-      order.setNum(num);
-      orderList.add(order);
-      listForm.setOrderList(orderList);
-
-      String message = order.getItem().getName() + "を" + order.getNum() + "個、カートに追加しました。";
-      listForm.setMessage(message);
+      // リダイレクト
+      return new ModelAndView("redirect:/ListView");
     }
+
+    Order order = new Order(item, listForm.getNum());
+
+    Cart cart = (Cart)session.getAttribute("cart");
+    if(cart == null) {
+        cart = new Cart();
+        session.setAttribute("cart", cart);
+    }
+    cart.add(order);
+
+    StringBuilder messageBuf = new StringBuilder();
+    messageBuf.append(item.getName());
+    messageBuf.append("を");
+    messageBuf.append(listForm.getNum());
+    messageBuf.append("点カートに追加しました。");
 
     // データをセッションへ保存
-    session.setAttribute("form", listForm);
+    session.setAttribute("message", messageBuf.toString());
+    session.setAttribute("cart", cart);
+
+    // リダイレクト
     return new ModelAndView("redirect:/ListView");
   }
 }
